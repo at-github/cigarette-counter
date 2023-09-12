@@ -11,14 +11,32 @@ defineProps<{
 }>()
 
 const cigarettes = ref<Cigarette[]>([])
-const dialogCigarette = ref<HTMLDialogElement| null>(null)
+const dialogCigarette = ref<HTMLDialogElement | null>(null)
+const currentCigarette = ref<Cigarette | undefined>(undefined)
 
 let tmpId = 0;
 
 const addCigarette = () => cigarettes.value.push({id: tmpId++, date: 'wip'})
 
-const showCigarette = () => {
+const showCigarette = (e: MouseEvent) => {
+  if (e.target === null)
+    return
+
+  if (!(e.target instanceof HTMLElement))
+    return
+
   if (dialogCigarette.value === null)
+    return
+
+  const cigaretteId = e.target?.dataset?.id
+  if (cigaretteId === undefined)
+    return
+
+  currentCigarette.value = cigarettes.value.find(c => {
+    return c.id == parseInt(cigaretteId, 10)
+  })
+
+  if (!currentCigarette.value)
     return
 
   dialogCigarette.value.showModal()
@@ -51,11 +69,16 @@ const cancelCigaretteDialog = (e: MouseEvent) => {
   </div>
 
   <ul id="cigarettes-list">
-    <li v-for="cigarette in cigarettes" :key="cigarette.id" @click="showCigarette">🚬</li>
+    <li
+      v-for="cigarette in cigarettes"
+      :key="cigarette.id"
+      :data-id="cigarette.id"
+      @click="showCigarette"
+    >🚬</li>
   </ul>
 
   <dialog id="dialog-cigarette" ref="dialogCigarette">
-    WIP
+    {{ currentCigarette }}
     <button
       @click="cancelCigaretteDialog"
       formmethod="dialog"
