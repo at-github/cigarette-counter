@@ -10,20 +10,22 @@ defineProps<{
   msg: string
 }>()
 
-const counter = ref<Cigarette[]>([])
+const cigarettes = ref<Cigarette[]>([])
 
 let tmpId = 0;
 
-const addCigarette = function() {
-  counter.value.push({id: tmpId++, date: 'wip'})
-}
+const addCigarette = () => cigarettes.value.push({id: tmpId++, date: 'wip'})
+
 </script>
 
 <template>
   <div id="counter-container">
     <button id="add-cigarette-button" @click=addCigarette>{{ msg }}</button>
-    <span id="count-day">{{ counter.length }}</span>
+    <span id="count-day">{{ cigarettes.length }}</span>
   </div>
+  <ul id="cigarettes-list">
+    <li v-for="cigarette in cigarettes" :key="cigarette.id">🚬</li>
+  </ul>
 </template>
 
 <style scoped>
@@ -57,5 +59,12 @@ const addCigarette = function() {
 
   text-align: center;
   font-weight: bold;
+}
+
+#cigarettes-list {
+  list-style: none;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 </style>
