@@ -1,17 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+type Cigarette = {
+  id: number;
+  date: string;
+}
+
 defineProps<{
   msg: string
 }>()
 
-const count = ref(0)
+const counter = ref<Cigarette[]>([])
+
+let tmpId = 0;
+
+const addCigarette = function() {
+  counter.value.push({id: tmpId++, date: 'wip'})
+}
 </script>
 
 <template>
   <div id="counter-container">
-    <button id="add-cigarette-button" @click=count++>{{ msg }}</button>
-    <span id="count-day">{{ count }}</span>
+    <button id="add-cigarette-button" @click=addCigarette>{{ msg }}</button>
+    <span id="count-day">{{ counter.length }}</span>
   </div>
 </template>
 
