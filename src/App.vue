@@ -8,8 +8,8 @@ import AddCigaretteButton from './components/AddCigaretteButton.vue'
     <h1>Compteur de cigarettes</h1>
   </header>
 
-  <div class="container">
-    <AddCigaretteButton msg="WIP - Nouvelle clope" />
+  <div class="container" style="margin-top: 80px">
+    <AddCigaretteButton msg="Nouvelle clope" />
   </div>
 
   <RouterView />
@@ -20,6 +20,7 @@ header {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   padding: 20px;
   text-align: left;
 }
