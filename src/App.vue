@@ -5,13 +5,27 @@ import AddCigaretteButton from './components/AddCigaretteButton.vue'
 
 <template>
   <header>
-    <div class="wrapper">
-      <AddCigaretteButton msg="WIP - Nouvelle clope" />
-    </div>
+    <h1>Compteur de cigarettes</h1>
   </header>
+
+  <div class="container">
+    <AddCigaretteButton msg="WIP - Nouvelle clope" />
+  </div>
 
   <RouterView />
 </template>
 
 <style scoped>
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  text-align: left;
+}
+
+h1 {
+  color: #AAA;
+  font-size: 1.5rem;
+}
 </style>
