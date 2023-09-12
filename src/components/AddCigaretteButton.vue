@@ -11,10 +11,36 @@ defineProps<{
 }>()
 
 const cigarettes = ref<Cigarette[]>([])
+const dialogCigarette = ref<HTMLDialogElement| null>(null)
 
 let tmpId = 0;
 
 const addCigarette = () => cigarettes.value.push({id: tmpId++, date: 'wip'})
+
+const showCigarette = () => {
+  if (dialogCigarette.value === null)
+    return
+
+  dialogCigarette.value.showModal()
+}
+
+const confirmCigaretteDialog = (e: MouseEvent) => {
+  e.preventDefault()
+
+  if (dialogCigarette.value === null)
+    return
+
+  dialogCigarette.value.close()
+}
+
+const cancelCigaretteDialog = (e: MouseEvent) => {
+  e.preventDefault()
+
+  if (dialogCigarette.value === null)
+    return
+
+  dialogCigarette.value.close()
+}
 
 </script>
 
@@ -23,9 +49,23 @@ const addCigarette = () => cigarettes.value.push({id: tmpId++, date: 'wip'})
     <button id="add-cigarette-button" @click=addCigarette>{{ msg }}</button>
     <span id="count-day">{{ cigarettes.length }}</span>
   </div>
+
   <ul id="cigarettes-list">
-    <li v-for="cigarette in cigarettes" :key="cigarette.id">🚬</li>
+    <li v-for="cigarette in cigarettes" :key="cigarette.id" @click="showCigarette">🚬</li>
   </ul>
+
+  <dialog id="dialog-cigarette" ref="dialogCigarette">
+    WIP
+    <button
+      @click="cancelCigaretteDialog"
+      formmethod="dialog"
+    >❌</button>
+
+    <button
+      @click="confirmCigaretteDialog"
+      id="confirmBtn"
+    >✅</button>
+  </dialog>
 </template>
 
 <style scoped>
@@ -66,5 +106,13 @@ const addCigarette = () => cigarettes.value.push({id: tmpId++, date: 'wip'})
   position: absolute;
   right: 0;
   top: 0;
+}
+
+#cigarettes-list li {
+  cursor: pointer;
+}
+
+#dialog-cigarette {
+  border: 1px solid white;
 }
 </style>
