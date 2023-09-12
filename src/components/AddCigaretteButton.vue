@@ -8,15 +8,14 @@ type Cigarette = {
 
 defineProps<{
   msg: string
-}>()
+}>();
 
 const cigarettes = ref<Cigarette[]>([])
 const dialogCigarette = ref<HTMLDialogElement | null>(null)
 const currentCigarette = ref<Cigarette | undefined>(undefined)
+const cigaretteDate = ref()
 
 let tmpId = 0;
-
-const addCigarette = () => cigarettes.value.push({id: tmpId++, date: 'wip'})
 
 const showCigarette = (e: MouseEvent) => {
   if (e.target === null)
@@ -42,51 +41,77 @@ const showCigarette = (e: MouseEvent) => {
   dialogCigarette.value.showModal()
 }
 
-const confirmCigaretteDialog = (e: MouseEvent) => {
-  e.preventDefault()
-
+const closeDialog = () => {
   if (dialogCigarette.value === null)
     return
 
   dialogCigarette.value.close()
+}
+
+const confirmCigaretteDialog = (e: MouseEvent) => {
+  e.preventDefault()
+
+  closeDialog()
 }
 
 const cancelCigaretteDialog = (e: MouseEvent) => {
   e.preventDefault()
 
-  if (dialogCigarette.value === null)
-    return
-
-  dialogCigarette.value.close()
+  closeDialog()
 }
 
-const removeCigarette = (e: MouseEvent) => {
+const checkBeforeAction = (e: MouseEvent) => {
   if (e.target === null)
-    return
+    throw new Error('Target not found')
 
   if (!(e.target instanceof HTMLElement))
-    return
-
-  if (dialogCigarette.value === null)
-    return
+    throw new Error('Target not handled')
 
   const cigaretteId = e.target?.dataset?.id
 
   if (cigaretteId === undefined)
+    throw new Error('Cigarette id not found')
+
+  return parseInt(cigaretteId, 10)
+}
+
+const addCigarette = (date: string, id: number | null = null) => cigarettes.value.push({id: id ?? tmpId++, date})
+const addCigaretteHandler = () => addCigarette('wip')
+
+const removeCigarette = (cigaretteId: number) => {
+  cigarettes.value = cigarettes.value.filter(c => c.id !== cigaretteId)
+}
+const removeCigaretteHandler = (e: MouseEvent) => {
+  try {
+    const cigaretteId = checkBeforeAction(e)
+    removeCigarette(cigaretteId)
+
+    closeDialog()
+  } catch {
     return
+  }
+}
 
-  cigarettes.value = cigarettes.value.filter(c => {
-    return c.id !== parseInt(cigaretteId, 10)
-  })
+const editCigaretteHandler = (e: MouseEvent) => {
+  try {
+    const cigaretteId = checkBeforeAction(e)
 
-  dialogCigarette.value.close()
+    removeCigarette(cigaretteId)
+    addCigarette(cigaretteDate.value, cigaretteId)
+
+    cigarettes.value = cigarettes.value.sort((a, b) => a.id - b.id)
+
+    closeDialog()
+  } catch {
+    return
+  }
 }
 
 </script>
 
 <template>
   <div id="counter-container">
-    <button id="add-cigarette-button" @click=addCigarette>{{ msg }}</button>
+    <button id="add-cigarette-button" @click=addCigaretteHandler>{{ msg }}</button>
     <span id="count-day">{{ cigarettes.length }}</span>
   </div>
 
@@ -101,10 +126,15 @@ const removeCigarette = (e: MouseEvent) => {
 
   <dialog id="dialog-cigarette" ref="dialogCigarette">
     {{ currentCigarette }}
+    <input type="date" v-model="cigaretteDate"/>
     <button
-      @click="removeCigarette"
+      @click="removeCigaretteHandler"
       :data-id="currentCigarette?.id"
     >🗑️</button>
+    <button
+      @click="editCigaretteHandler"
+      :data-id="currentCigarette?.id"
+    >✏️</button>
     <button
       @click="cancelCigaretteDialog"
       formmethod="dialog"
