@@ -1,24 +1,50 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 defineProps<{
   msg: string
 }>()
+
+const count = ref(0)
 </script>
 
 <template>
-  <button id="add-cigarette-button">{{ msg }}</button>
+  <div id="counter-container">
+    <button id="add-cigarette-button" @click=count++>{{ msg }}</button>
+    <span id="count-day">{{ count }}</span>
+  </div>
 </template>
 
 <style scoped>
-#add-cigarette-button {
-  background-color: orange;
-  font-size: 5vw;
+#counter-container {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+
   width: 50vw;
+  height: 75vw;
+
+  margin-left: -25%;
+}
+
+#add-cigarette-button {
+  width: 100%;
   height: 50vw;
   border-radius: 25vw;
-  margin-top: -25vw;
-  margin-left: -25vw;
-  position: absolute;
-  top: 50%;
-  left: 50%;
+
+  background-color: orange;
+  font-size: 5vw;
+
+  -webkit-tap-highlight-color: transparent; 
+}
+
+#count-day {
+  display: block;
+  position: relative;
+  height: 5rem;
+  top: -5rem;
+
+  text-align: center;
+  font-weight: bold;
 }
 </style>
