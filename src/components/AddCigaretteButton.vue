@@ -60,6 +60,28 @@ const cancelCigaretteDialog = (e: MouseEvent) => {
   dialogCigarette.value.close()
 }
 
+const removeCigarette = (e: MouseEvent) => {
+  if (e.target === null)
+    return
+
+  if (!(e.target instanceof HTMLElement))
+    return
+
+  if (dialogCigarette.value === null)
+    return
+
+  const cigaretteId = e.target?.dataset?.id
+
+  if (cigaretteId === undefined)
+    return
+
+  cigarettes.value = cigarettes.value.filter(c => {
+    return c.id !== parseInt(cigaretteId, 10)
+  })
+
+  dialogCigarette.value.close()
+}
+
 </script>
 
 <template>
@@ -79,6 +101,10 @@ const cancelCigaretteDialog = (e: MouseEvent) => {
 
   <dialog id="dialog-cigarette" ref="dialogCigarette">
     {{ currentCigarette }}
+    <button
+      @click="removeCigarette"
+      :data-id="currentCigarette?.id"
+    >🗑️</button>
     <button
       @click="cancelCigaretteDialog"
       formmethod="dialog"
