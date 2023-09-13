@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-
-type Cigarette = {
-  id: number;
-  date: string;
-}
+import { type Cigarette } from '../ts/types/cigarette'
+import CigarettesList from './CigarettesList.vue';
 
 defineProps<{
   msg: string
@@ -115,14 +112,7 @@ const editCigaretteHandler = (e: MouseEvent) => {
     <span id="count-day">{{ cigarettes.length }}</span>
   </div>
 
-  <ul id="cigarettes-list">
-    <li
-      v-for="cigarette in cigarettes"
-      :key="cigarette.id"
-      :data-id="cigarette.id"
-      @click="showCigarette"
-    >🚬</li>
-  </ul>
+  <CigarettesList :cigarettes="cigarettes" :showCigarette="showCigarette"/>
 
   <dialog id="dialog-cigarette" ref="dialogCigarette">
     {{ currentCigarette }}
@@ -178,17 +168,6 @@ const editCigaretteHandler = (e: MouseEvent) => {
 
   text-align: center;
   font-weight: bold;
-}
-
-#cigarettes-list {
-  list-style: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-#cigarettes-list li {
-  cursor: pointer;
 }
 
 #dialog-cigarette {
