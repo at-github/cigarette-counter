@@ -3,7 +3,7 @@ import { type Cigarette } from '../ts/types/cigarette'
 
 defineProps<{
   cigarettes: Array<Cigarette>,
-  showCigarette: any
+  showCigarette: (p: MouseEvent) => void
 }>();
 </script>
 

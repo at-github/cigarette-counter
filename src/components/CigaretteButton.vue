@@ -1,108 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+
 import { type Cigarette } from '../ts/types/cigarette'
-import CigarettesList from './CigarettesList.vue';
 
 defineProps<{
-  msg: string
+  msg: string,
+  cigarettes: Cigarette[],
+  addCigaretteHandler: (p: MouseEvent) => void
 }>();
-
-const cigarettes = ref<Cigarette[]>([])
-const dialogCigarette = ref<HTMLDialogElement | null>(null)
-const currentCigarette = ref<Cigarette | undefined>(undefined)
-const cigaretteDate = ref()
-
-let tmpId = 0;
-
-const showCigarette = (e: MouseEvent) => {
-  if (e.target === null)
-    return
-
-  if (!(e.target instanceof HTMLElement))
-    return
-
-  if (dialogCigarette.value === null)
-    return
-
-  const cigaretteId = e.target?.dataset?.id
-  if (cigaretteId === undefined)
-    return
-
-  currentCigarette.value = cigarettes.value.find(c => {
-    return c.id == parseInt(cigaretteId, 10)
-  })
-
-  if (!currentCigarette.value)
-    return
-
-  dialogCigarette.value.showModal()
-}
-
-const closeDialog = () => {
-  if (dialogCigarette.value === null)
-    return
-
-  dialogCigarette.value.close()
-}
-
-const confirmCigaretteDialog = (e: MouseEvent) => {
-  e.preventDefault()
-
-  closeDialog()
-}
-
-const cancelCigaretteDialog = (e: MouseEvent) => {
-  e.preventDefault()
-
-  closeDialog()
-}
-
-const checkBeforeAction = (e: MouseEvent) => {
-  if (e.target === null)
-    throw new Error('Target not found')
-
-  if (!(e.target instanceof HTMLElement))
-    throw new Error('Target not handled')
-
-  const cigaretteId = e.target?.dataset?.id
-
-  if (cigaretteId === undefined)
-    throw new Error('Cigarette id not found')
-
-  return parseInt(cigaretteId, 10)
-}
-
-const addCigarette = (date: string, id: number | null = null) => cigarettes.value.push({id: id ?? tmpId++, date})
-const addCigaretteHandler = () => addCigarette('wip')
-
-const removeCigarette = (cigaretteId: number) => {
-  cigarettes.value = cigarettes.value.filter(c => c.id !== cigaretteId)
-}
-const removeCigaretteHandler = (e: MouseEvent) => {
-  try {
-    const cigaretteId = checkBeforeAction(e)
-    removeCigarette(cigaretteId)
-
-    closeDialog()
-  } catch {
-    return
-  }
-}
-
-const editCigaretteHandler = (e: MouseEvent) => {
-  try {
-    const cigaretteId = checkBeforeAction(e)
-
-    removeCigarette(cigaretteId)
-    addCigarette(cigaretteDate.value, cigaretteId)
-
-    cigarettes.value = cigarettes.value.sort((a, b) => a.id - b.id)
-
-    closeDialog()
-  } catch {
-    return
-  }
-}
 
 </script>
 
@@ -111,30 +15,6 @@ const editCigaretteHandler = (e: MouseEvent) => {
     <button id="add-cigarette-button" @click=addCigaretteHandler>{{ msg }}</button>
     <span id="count-day">{{ cigarettes.length }}</span>
   </div>
-
-  <CigarettesList :cigarettes="cigarettes" :showCigarette="showCigarette"/>
-
-  <dialog id="dialog-cigarette" ref="dialogCigarette">
-    {{ currentCigarette }}
-    <input type="date" v-model="cigaretteDate"/>
-    <button
-      @click="removeCigaretteHandler"
-      :data-id="currentCigarette?.id"
-    >🗑️</button>
-    <button
-      @click="editCigaretteHandler"
-      :data-id="currentCigarette?.id"
-    >✏️</button>
-    <button
-      @click="cancelCigaretteDialog"
-      formmethod="dialog"
-    >❌</button>
-
-    <button
-      @click="confirmCigaretteDialog"
-      id="confirmBtn"
-    >✅</button>
-  </dialog>
 </template>
 
 <style scoped>
